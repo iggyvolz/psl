@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Psl\IO;
 
 use Generator;
+use Psl;
 use Psl\Async;
 use Psl\Channel;
 use Psl\Result;
 use Psl\Str;
-use Psl;
 
 /**
  * Streaming the output of the given read stream handles using a generator.
@@ -39,8 +39,10 @@ function streaming(iterable $handles, ?float $timeout = null): Generator
 {
     /**
      * @psalm-suppress UnnecessaryVarAnnotation
+     *
      * @var Channel\ReceiverInterface<array{T|null, Result\ResultInterface<string>}> $receiver
      * @psalm-suppress UnnecessaryVarAnnotation
+     *
      * @var Channel\SenderInterface<array{T|null, Result\ResultInterface<string>}> $sender
      */
     [$receiver, $sender] = Channel\unbounded();

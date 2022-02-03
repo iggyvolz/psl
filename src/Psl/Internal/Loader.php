@@ -373,8 +373,8 @@ final class Loader
         'Psl\Encoding\Base64\decode',
         'Psl\Encoding\Hex\encode',
         'Psl\Encoding\Hex\decode',
-        'Psl\Shell\escape_argument',
         'Psl\Shell\execute',
+        'Psl\Shell\Internal\escape_argument',
         'Psl\Html\encode',
         'Psl\Html\encode_special_characters',
         'Psl\Html\decode',
@@ -734,6 +734,7 @@ final class Loader
         'Psl\Hash\Hmac\Algorithm',
         'Psl\OS\OperatingSystemFamily',
         'Psl\Password\Algorithm',
+        'Psl\Shell\ErrorOutputBehavior'
     ];
 
     public const TYPE_CONSTANTS = 1;

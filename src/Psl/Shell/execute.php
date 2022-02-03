@@ -30,7 +30,6 @@ use function strpbrk;
  *                                                 use the default value ( the current directory )
  * @param array<string, string> $environment A dict with the environment variables for the command that
  *                                           will be run.
- * @param bool $escape_arguments If set to true ( default ), all $arguments will be escaped using `escape_argument`.
  *
  * @psalm-taint-sink shell $command
  *
@@ -44,23 +43,10 @@ function execute(
     array   $arguments = [],
     ?string $working_directory = null,
     array   $environment = [],
-    bool    $escape_arguments = true,
+    ErrorOutputBehavior $error_output_behavior = ErrorOutputBehavior::DISCARD,
     ?float  $timeout = null
 ): string {
-    if ($escape_arguments) {
-        $arguments = Vec\map(
-            $arguments,
-            /**
-             * @param string $argument
-             *
-             * @return string
-             *
-             * @pure
-             */
-            static fn(string $argument): string => escape_argument($argument)
-        );
-    }
-
+    $arguments = Vec\map($arguments, Internal\escape_argument(...));
     $commandline = Str\join([$command, ...$arguments], ' ');
 
     /** @psalm-suppress MissingThrowsDocblock - safe ( $offset is within-of-bounds ) */
@@ -201,5 +187,10 @@ function execute(
         throw new Exception\FailedExecutionException($commandline, $stdout_content, $stderr_content, $code);
     }
 
-    return $stdout_content;
+    return match ($error_output_behavior) {
+        ErrorOutputBehavior::PREPEND => $stderr_content . $stdout_content,
+        ErrorOutputBehavior::APPEND => $stdout_content . $stderr_content,
+        ErrorOutputBehavior::REPLACE => $stderr_content,
+        ErrorOutputBehavior::DISCARD => $stdout_content,
+    };
 }

@@ -20,6 +20,7 @@ function connect(
     int $port = 0,
     ?ConnectOptions $options = null,
     ?float $timeout = null,
+    bool $tls = false,
 ): Network\StreamSocketInterface {
     $options ??= ConnectOptions::create();
 
@@ -29,7 +30,7 @@ function connect(
         ]
     ];
 
-    $socket = Network\Internal\socket_connect("tcp://{$host}:{$port}", $context, $timeout);
+    $socket = Network\Internal\socket_connect(($tls ? "tls" : "tcp") . "://{$host}:{$port}", $context, $timeout);
 
     /** @psalm-suppress MissingThrowsDocblock */
     return new Network\Internal\Socket($socket);
